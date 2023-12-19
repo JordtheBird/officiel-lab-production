@@ -20,10 +20,27 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 public class CartServer implements Runnable {
-    private static final int PORT = 7222;
+    private int port;
+
+    public CartServer(int port) {
+        this.port = port;
+    }
 
     public static void main(String[] args) {
-        new CartServer().run();
+        int port = parsePortArgument(args);
+        new CartServer(port).run();
+    }
+
+    private static int parsePortArgument(String[] args) {
+        if (args.length > 0) {
+            try {
+                return Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Le numéro de port doit être un nombre valide.");
+            }
+        } else {
+            throw new IllegalArgumentException("Aucun numéro de port fourni.");
+        }
     }
 
     public void run() {
@@ -36,7 +53,7 @@ public class CartServer implements Runnable {
     }
 
     private void startServer() {
-        Server server = new Server(PORT);
+        Server server = new Server(port);
         ServletContextHandler contextHandler = new ServletContextHandler(server, "/");
         contextHandler.addFilter(EntityManagerContextFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
