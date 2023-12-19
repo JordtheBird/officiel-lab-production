@@ -27,21 +27,23 @@ public class CartServer implements Runnable {
     }
 
     public static void main(String[] args) {
-        int PORT = parsePortArgument(args);
+        int PORT = parsePortArgument();
         new CartServer(PORT).run();
     }
 
-    private static int parsePortArgument(String[] args) {
-        if (args.length > 0) {
+    private static int parsePortArgument() {
+        String port = System.getProperty("port");
+        if (port != null) {
             try {
-                return Integer.parseInt(args[0]);
+                return Integer.parseInt(port);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Le numéro de PORT doit être un nombre valide.");
+                throw new IllegalArgumentException("Le numéro de port doit être un nombre valide.");
             }
         } else {
-            throw new IllegalArgumentException("Aucun numéro de PORT fourni.");
+            throw new IllegalArgumentException("Aucun numéro de port fourni.");
         }
     }
+
 
     public void run() {
         configureContext();
